@@ -236,8 +236,30 @@ dir_remove (struct dir *dir, const char *name)
     goto done;
 
   /* Verify that it is not an in-use or non-empty directory. */
+  
+  if(inode_get_type(inode) != DIR_INODE)
+    goto done;
 
-  // ADD CODE HERE
+  if(inode_open_cnt(inode) > 1)
+    goto done;
+
+  struct dir_entry scan_entry;
+  off_t scan_offset;
+  int in_use_count = 0;
+
+  for(scan_offset = 0; 
+      inode_read_at(inode, 
+                    &scan_entry, 
+                    sizeof scan_entry, 
+                    scan_offset) == sizeof scan_entry;
+      scan_offset += sizeof scan_entry)
+  {
+    if(scan_entry.in_use)
+      in_use_count++;
+  }
+
+  if(in_use_count > 2)
+    goto done;
 
   /* Erase directory entry. */
   e.in_use = false;
