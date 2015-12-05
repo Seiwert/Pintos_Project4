@@ -221,7 +221,7 @@ dir_remove (struct dir *dir, const char *name)
   ASSERT (dir != NULL);
   ASSERT (name != NULL);
 
-  /* Don't allow . or .. to be removed */
+  /* Don't allow . or .. to be removed */  
   if(strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
     return false;
 

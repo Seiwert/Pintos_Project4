@@ -1,0 +1,84 @@
+		           +---------------------------+
+       	       |         CIS 520           |
+		           | PROJECT 4: File System    |
+		           |     DESIGN DOCUMENT       |
+		           +---------------------------+
+
+---- GROUP ----
+
+>> Fill in the names of your group members.
+
+Montana Grier
+Austin Fangman
+Adam Seiwert
+
+---- PRELIMINARIES ----
+
+>> If you have any preliminary comments on your submission, notes for the
+>> TAs, or extra credit, please give them here.
+
+>> Please cite any offline or online sources you consulted while
+>> preparing your submission, other than the Pintos documentation, course
+>> text, lecture notes, and course staff.
+
+---- DATA STRUCTURES ----
+
+>> A1: Copy here the declaration of each new or changed `struct' or
+>> `struct' member, global or static variable, `typedef', or
+>> enumeration.  Identify the purpose of each in 25 words or less.
+
+We didn't add any new data structures.
+
+>> A2: What is the maximum size of a file supported by the inode
+>> structure?  Show your work.
+
+The size of an individual inode is defined by BLOCK_SECTOR_SIZE, which make it 
+512 bytes long. There are 125 sectors available for files (from DIRECT_CNT +
+INDIRECT_CNT + DBL_INDIRECT_CNT). This means that a file can be a maximum size 
+of about 64 KB.
+
+---- DIRECTORIES and SUBDIRECTORIES ----
+
+>> A3: How do you prevent races on directory entries?  For example,
+>> only one of two simultaneous attempts to remove a single file
+>> should succeed, as should only one of two simultaneous attempts to
+>> create a file with the same name, and so on.
+
+A lock is required to modify an inode on directory removal. This technique
+mitigates the risk of encountering race conditions. This same locking technique 
+is used for directory creation as well.
+
+>> A4: Does your implementation allow a directory to be removed if it
+>> is open by a process or if it is in use as a process's current
+>> working directory?  If so, what happens to that process's future
+>> file system operations?  If not, how do you prevent it?
+
+Our implementation checks that the directory to be removed is not the current
+working directory by checking the return value of inode_open_cnt(<this inode>).
+In a similar way, we check to make sure that we are not removing a directory that
+is otherwise in use.
+
+
+			   SURVEY QUESTIONS
+			   ================
+
+Answering these questions is optional, but it will help us improve the
+course in future quarters.  Feel free to tell us anything you
+want--these questions are just to spur your thoughts.  You may also
+choose to respond anonymously in the course evaluations at the end of
+the quarter.
+
+>> In your opinion, was this assignment, or any one of the three problems
+>> in it, too easy or too hard?  Did it take too long or too little time?
+
+>> Did you find that working on a particular part of the assignment gave
+>> you greater insight into some aspect of OS design?
+
+>> Is there some particular fact or hint we should give students in
+>> future quarters to help them solve the problems?  Conversely, did you
+>> find any of our guidance to be misleading?
+
+>> Do you have any suggestions for the TAs to more effectively assist
+>> students, either for future quarters or the remaining projects?
+
+>> Any other comments?
