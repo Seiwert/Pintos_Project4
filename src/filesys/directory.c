@@ -222,8 +222,8 @@ dir_remove (struct dir *dir, const char *name)
   ASSERT (name != NULL);
 
   /* Don't allow . or .. to be removed */
-
-  // ADD CODE HERE
+  if(strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
+    return false;
 
   /* Find directory entry. */
   inode_lock (dir->inode);
