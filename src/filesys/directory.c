@@ -216,11 +216,7 @@ dir_remove (struct dir *dir, const char *name)
   struct dir_entry e;
   struct inode *inode = NULL;
   bool success = false;
-  off_t ofs;
-
-  struct dir_entry e1;
-  off_t ofs1;
-  int count = 0;
+  off_t ofs;  
 
   ASSERT (dir != NULL);
   ASSERT (name != NULL);
@@ -240,19 +236,27 @@ dir_remove (struct dir *dir, const char *name)
     goto done;
 
   /* Verify that it is not an in-use or non-empty directory. */  
-  if(inode_get_type(inode) == DIR_INODE)//check if actually a directory
+  if(inode_get_type(inode) == DIR_INODE)
   {
     if(inode_open_cnt(inode) > 1)
       goto done;
-    for (ofs1 = 0; inode_read_at (inode, &e1, sizeof e1, ofs1) == sizeof e1;
-       ofs1 += sizeof e1)
+
+    struct dir_entry scan_entry;
+    off_t scan_offset;
+    int in_use_count = 0;
+
+    for(scan_offset = 0;
+        inode_read_at(inode,
+                      &scan_entry,
+                      sizeof scan_entry,
+                      scan_offset) == sizeof scan_entry;
+        scan_offset += sizeof scan_entry)
     {
-      if (e1.in_use) 
-      {
-        count++;
-      }
+      if(scan_entry.in_use)
+        in_use_count++;
     }
-    if(count > 2)
+
+    if(in_use_count > 2)
       goto done;
   }
 
