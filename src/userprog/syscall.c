@@ -612,6 +612,9 @@ sys_chdir (const char *udir)
   bool ok = false;
 
   // ADD CODE HERE
+  char *kdir = copy_in_string(udir);
+  ok = filesys_chdir(kdir);
+  palloc_free_page(kdir);
 
   return ok;
 }
@@ -651,8 +654,13 @@ sys_isdir (int handle)
 static int
 sys_inumber (int handle)
 {
-
   // ADD AND MODIFY CODE HERE - call dir_get_inode() for directories
+  if(sys_isdir(handle))
+  {
+    struct file_descriptor *dir_descriptor = lookup_dir_fd(handle);
+    struct inode *inode = dir_get_inode(dir_descriptor);
+    return inode_get_inumber(inode);
+  }
 
   struct file_descriptor *fd = lookup_fd (handle);
   struct inode *inode = file_get_inode (fd->file);
